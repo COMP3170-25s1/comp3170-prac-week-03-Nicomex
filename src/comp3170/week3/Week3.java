@@ -6,6 +6,8 @@ import static org.lwjgl.opengl.GL41.*;
 import java.io.File;
 import java.io.IOException;
 
+import org.joml.Matrix3f;
+
 import comp3170.OpenGLException;
 import comp3170.IWindowListener;
 import comp3170.Shader;
@@ -43,6 +45,9 @@ public class Week3 implements IWindowListener {
 		
 		// create the scene
 		scene = new Scene();
+		
+		Matrix3f modelMatrix = new Matrix3f();
+		shader.setUniform("u_modelMatrix", modelMatrix);
 		
 	}
 
