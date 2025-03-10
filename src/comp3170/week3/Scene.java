@@ -30,6 +30,8 @@ public class Scene {
 	private int colourBuffer;
 
 	private Shader shader;
+	
+	Matrix4f modelMatrix = new Matrix4f();
 
 	public Scene() {
 
@@ -86,6 +88,11 @@ public class Scene {
 		// set the attributes
 		shader.setAttribute("a_position", vertexBuffer);
 		shader.setAttribute("a_colour", colourBuffer);
+		
+		bottomRightScaled();
+
+		// set the uniforms
+		shader.setUniform("u_modelMatrix", modelMatrix);
 
 		// draw using index buffer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -107,7 +114,7 @@ public class Scene {
 
 	public static Matrix4f translationMatrix(float tx, float ty, Matrix4f dest) {
 		// clear the matrix to the identity matrix
-		dest.identity();
+		//dest.identity();
 
 		//     [ 1 0 0 tx ]
 		// T = [ 0 1 0 ty ]
@@ -133,8 +140,7 @@ public class Scene {
 	 */
 
 	public static Matrix4f rotationMatrix(float angle, Matrix4f dest) {
-
-		// TODO: Your code here
+		
 		dest.identity();
 		
 		//
@@ -167,7 +173,7 @@ public class Scene {
 	 */
 
 	public static Matrix4f scaleMatrix(float sx, float sy, Matrix4f dest) {
-		dest.identity();
+		//dest.identity();
 		// TODO: Your code here
 		//
 		//     [sx 0 0 0]
@@ -176,9 +182,17 @@ public class Scene {
 		//     [0  0 0 1]
 		//
 		dest.m00(sx);
-		dest.m10(sy);
+		dest.m11(sy);
 		
 		return dest;
+	}
+	public void bottomRightScaled() {
+		//rotationMatrix(-1.57f, modelMatrix); //Rotates it 90 degrees
+		//Translate it to 0.5x -0.5y scale the x and y by 0.5\
+		modelMatrix.identity(); //clear the matrix
+		
+		modelMatrix.set(translationMatrix(0.5f, -0.5f, modelMatrix));
+		modelMatrix.mul(scaleMatrix(0.5f, 0.5f, modelMatrix));
 	}
 
 }
