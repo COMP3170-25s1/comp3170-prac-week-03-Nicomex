@@ -5,8 +5,10 @@ package comp3170.week3;
  
  import java.io.File;
  import java.io.IOException;
- 
- import comp3170.OpenGLException;
+
+import org.joml.Vector2f;
+
+import comp3170.OpenGLException;
  import comp3170.IWindowListener;
  import comp3170.Shader;
  import comp3170.ShaderLibrary;
@@ -17,11 +19,19 @@ package comp3170.week3;
  	private Window window;
  	private Shader shader;
  	
+ 	
  	final private File DIRECTORY = new File("src/comp3170/week3"); 
  	
  	private int width = 800;
  	private int height = 800;
+ 	
+ 	long oldTime;
  	private Scene scene;
+ 	
+ 	private static final float TRANSLATION_SPEED = 1;
+	private static final float TAU = 6.283185f; 
+ 	private static final float ROTATION_SPEED = TAU / 12;
+ 	private static final float SCALE_SPEED = 2f;
  	
  	public Week3() throws OpenGLException  {
  		
@@ -34,30 +44,51 @@ package comp3170.week3;
  		window.run();
  	}
  	
- 	@Override
+ 	@Override // run once
  	public void init() {
  		
  		new ShaderLibrary(DIRECTORY);
  		// set the background colour to white
- 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	
+ 		glClearColor(0.25f, 0.25f, 0.25f, 1.0f);	
  		
  		// create the scene
  		scene = new Scene();
+ 		
+ 		oldTime = System.currentTimeMillis();
+ 		//scale the model once
+ 		scene.modelMatrix.translate(0.5f, 0.0f, 0.0f).scale(0.25f, 0.25f, 0);
  		
  	}
  
  
  	@Override
  	public void draw() {
- 
-         // clear the colour buffer
+ 		
+        // clear the colour buffer
  		glClear(GL_COLOR_BUFFER_BIT);	
  		
  		scene.draw();
+ 		
+ 		update();
  	    
  	}
- 
- 	@Override
+
+ 	private void update() {
+ 		// calculate seconds since last frame 
+ 	   long time = System.currentTimeMillis(); 
+ 	   
+ 	   float deltaTime = (time - oldTime) / 1000f; 
+ 	   oldTime = time; 
+ 	   //scene.update(deltaTime);
+ 	   System.out.println("update: dt =" + deltaTime + "s:");
+ 	   // scale updates by deltaTime 
+ 	  float rotation = ROTATION_SPEED * deltaTime;
+ 	  scene.modelMatrix.translate(0, TRANSLATION_SPEED * deltaTime, 0).rotateZ(rotation);
+ 	   
+ 	   
+	}
+
+	@Override
  	public void resize(int width, int height) {
  		this.width = width;
  		this.height = height;
